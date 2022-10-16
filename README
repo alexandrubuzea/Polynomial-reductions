@@ -1,0 +1,110 @@
+University Project -> Algorithm Analysis
+
+Copyright Buzea Alexandru-Mihai-Iulian
+Contact: alexandru.buzea2007@stud.acs.upb.ro
+
+Group -> 321CAb
+
+------------------------- POLYNOMIAL REDUCTIONS ----------------------------
+
+    During this homework, we had to apply the concepts of polynomial reduction
+in order to solve three practical problems, proven to be NP-complete.
+    A polynomial reduction can be used if the input transfer function
+translates the input of our problem to an input of a known, solved problem in
+polynomial time complexity. In our case, we used an oracle (a CNF-SAT solver
+written in Python), so we needed to make the polynomial reductions up to SAT
+problem.
+
+    Introduction - general judgement
+
+    The three problems we had consisted in finding particular structures in
+graphs, defined by a sequence (subset) of nodes from inside the graph.
+Therefore, a useful approach was to define a boolean set of variables, called
+y_i,u, where i is the ith node in the graph and u is the uth node in the subset
+to be returned. From now, the boolean expression is easy to be generated: using
+a set of clauses, which all needed to be true (this is why our SAT solver
+receives only CNF boolean expressions).
+
+The problems to be solved were:
+
+    1. NETWORKS (RETELE)
+
+    Our problem proved to be basically the k-clique problem. In order to do
+the polynomial reduction, we needed a special set of clauses for this problem,
+which are:
+    - there must be at least one node in the graph on a position in the set
+to be returned.
+    - there must be, in the same time, at most one node on that position
+    - for any non-edge, the two nodes cannot be simultaneously in the set
+solution, because of the definition of a clique
+    - the nodes in the clique must be distinct (there is not possible for
+a node to be multiple times in the solution set).
+
+    Therefore, we build a transfer function which performs the translation
+of the input of our problem to the input of the CNF-SAT problem in polynomial
+time. The number of operations (iterations) done is roughly:
+
+    T(n, k) = n * k + n ^ 2 * k ^ 2 / 2 + k * n ^ 2 / 2 + n * k ^ 2 / 2
+
+    This can be also expressed as T(n, k) -> \Theta(n^2 * k^2), which is a
+polynomial time. Having in consideration that a clique cannot be larger than
+the graph itself, we can express the complexity class in a more general way:
+    
+    T(n, k) = O(n^4) -> since k <= n
+
+    Since our transfer function has polynomial complexity, its reversal (for
+deciphering the output) has also polynomial complexity, so the polynomial
+reduction is correct.
+
+    2. ADVERTISING (RECLAME)
+
+    Our problem proved to be basically the vertex cover problem. In order to
+perform the polynomial reduction to CNF-SAT, we have chosen another set of
+clauses, such as:
+    - a node must exist on each position in the vertex cover set solution
+    - the vertex cover clause: for each edge, at least one of the two nodes
+must appear in the solution
+    - a node cannot appear multiple times in the solution set
+    - a position in the solution set must be occupied by only one node.
+
+    Our transfer function has the complexity:
+    
+    T(n, k) = n * k + n ^ 2 * k + n * k ^ 2 / 2
+
+    This can also be expressed as T(n, k) -> \Theta(n^2 * k + k^2 * n).
+    Based on the fact that the vertex cover is a subset of the node set,
+we have that k <= n and our compelxity can be expressed as:
+    T(n, k) -> O(n ^ 3)
+
+    In contrast, we need to perform the oracle call multiple times, based
+on the binary search algorithm, which gives us a complexity of
+    T_total(n) = O(n ^ 3 log n) for all transfer function calls.
+
+    3. REGISTERS (REGISTRE)
+
+    Our problem proved to be basically the k-coloring problem. In order to do
+the polynomial reduction, we needed a special set of clauses for this problem,
+which are:
+    - every node must be colored with at most one color
+    - every node must be colored with at least one color (the uncolored nodes
+are not allowed) -> every node must have a single color.
+    - the k-coloring clause: for any edge, the two nodes of the edge must have
+different colors
+    - for each color, we need to use all the k colors (therefore, we would have
+not used all the colors).
+
+    Therefore, we build a transfer function which performs the translation
+of the input of our problem to the input of the CNF-SAT problem in polynomial
+time. The number of operations (iterations) done is roughly:
+
+    T(n, k) = n * k + n^2 * k / 2 + n * k + n * k ^ 2
+
+    This can be also expressed as T(n, k) -> \Theta(n^2 *k + n * k ^ 2), which
+is a polynomial time. Given the fact that we cannot use more than n colors in
+order to follow the upper conditions, we can express the complexity class in a
+more general way:
+    T(n, k) -> O(n ^ 3)
+
+    Since our transfer function has polynomial complexity, its reversal (for
+deciphering the output) has also polynomial complexity, so the polynomial
+reduction is correct.
